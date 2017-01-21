@@ -50,5 +50,7 @@ header = {'Host': 'jwgl.hunnu.edu.cn',
 r2 = requests.post(r.url, data=postData ,headers=header)
 #构造并且post
 tables = getscore(r2.url, r2.text, year, term)
+print ("考试成绩")
 printscore (tables[0],15)
+print （"补考"）
 printscore (tables[2],5)
