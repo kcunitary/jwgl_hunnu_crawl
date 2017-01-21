@@ -2,7 +2,7 @@
 import requests
 import re
 import os
-#²ÎÊı
+#å‚æ•°
 
 jwgl_url = "http://jwgl.hunnu.edu.cn/"
 user = 'user'
@@ -11,12 +11,12 @@ year = '2016-2017'
 term='1'
 
 def vs(text):
-	'''×¥È¡µÇÂ½Ò³ÃæµÄviewstateÖµ£¬post±ØĞë´øÉÏ¸ÃÖµÓÃÀ´·şÎñÆ÷µÄÑéÖ¤'''
+	'''æŠ“å–ç™»é™†é¡µé¢çš„viewstateå€¼ï¼Œpostå¿…é¡»å¸¦ä¸Šè¯¥å€¼ç”¨æ¥æœåŠ¡å™¨çš„éªŒè¯'''
 	viewstate = re.findall(r'<input[^>]*name=\"__VIEWSTATE\"[^>]*value=\"([^"]*)\"[^>]*>',text)
 	return viewstate[0]
 
 def getscore(url, text, year, term):
-	'''url´«ÈëµÇÂ½Ò³ÃæµÄ£¬·½±ãÌæ»»ÖØĞÂ¹¹Ôì²éÑ¯µÄurl'''
+	'''urlä¼ å…¥ç™»é™†é¡µé¢çš„ï¼Œæ–¹ä¾¿æ›¿æ¢é‡æ–°æ„é€ æŸ¥è¯¢çš„url'''
 	mlink = re.findall(r'xscj_gc.aspx\?xh=\d+&xm=[^&]+&gnmkdm=N121605',text)
 	path = re.findall(r'http://[^/]+/\([^)]+\)/', url)
 	fdurl = path[0] + mlink[0]
@@ -24,13 +24,13 @@ def getscore(url, text, year, term):
 	'User-Agent':"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.34 Safari/537.36",
 	'Referer': url}
 	r = requests.get(fdurl,headers=header)
-	#Ìø×ªµ½²éÑ¯Ò³Ãæ£¬×¼±¸Ìá½»²éÑ¯Ìõ¼ş
+	#è·³è½¬åˆ°æŸ¥è¯¢é¡µé¢ï¼Œå‡†å¤‡æäº¤æŸ¥è¯¢æ¡ä»¶
 	postData = {'__VIEWSTATE': vs(r.text), 'ddlXN':year,'ddlXQ':term,'Button1':'%B0%B4%D1%A7%C6%DA%B2%E9%D1%AF'}
 	r2 = requests.post(r.url, data=postData ,headers=header)
 	r2.encoding = "gbk"
 	tables = re.findall(r'<table.*?</table>',r2.text,re.S)
 	return tables
-	#tables·Ö±ğÊÇ³É¼¨£¬ÈËÊı£¬ºÍ²¹¿¼³É¼¨
+	#tablesåˆ†åˆ«æ˜¯æˆç»©ï¼Œäººæ•°ï¼Œå’Œè¡¥è€ƒæˆç»©
 
 def printscore(table, column):
 	info = re.findall(r'<td>(.*?)</td>',table)
@@ -42,15 +42,13 @@ def printscore(table, column):
 		least = least+column
 
 r = requests.get(jwgl_url)
-#×¥È¡µÇÂ½Ò³ÃæµÄviewstateÖµ£¬post±ØĞë´øÉÏ¸ÃÖµ
+#æŠ“å–ç™»é™†é¡µé¢çš„viewstateå€¼ï¼Œpostå¿…é¡»å¸¦ä¸Šè¯¥å€¼
 postData = {'__VIEWSTATE': vs(r.text), 'TextBox1': user,'TextBox2': password, 'TextBox3':'','RadioButtonList1':'%D1%A7%C9%FA','Button1':'','lbLanguage':''}
 header = {'Host': 'jwgl.hunnu.edu.cn',
 'User-Agent':"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.34 Safari/537.36",
 'Referer': r.url}
 r2 = requests.post(r.url, data=postData ,headers=header)
-#¹¹Ôì²¢ÇÒpost
+#æ„é€ å¹¶ä¸”post
 tables = getscore(r2.url, r2.text, year, term)
-print ("³É¼¨")
 printscore (tables[0],15)
-print "²¹¿¼"£©
 printscore (tables[2],5)
